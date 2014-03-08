@@ -96,6 +96,7 @@
 			endEndcapEnd.y -= halfStartEndcapDist.y;
 			
 			NSBezierPath	*	segmentPath = [NSBezierPath bezierPath];
+			[segmentPath setLineWidth: 0.5];
 			[segmentPath moveToPoint: lastEndcapStart];
 			[segmentPath lineToPoint: lastEndcapEnd];
 			[segmentPath lineToPoint: endEndcapEnd];
@@ -104,6 +105,7 @@
 			
 			[NSColor.purpleColor set];
 			[segmentPath fill];
+			[segmentPath stroke];
 			
 			lastEndcapStart = endEndcapStart;
 			lastEndcapEnd = endEndcapEnd;
