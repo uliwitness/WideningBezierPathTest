@@ -82,18 +82,18 @@
 				lastEndcapStart = startPoint,
 				lastEndcapEnd = startPoint;
 				lastEndcapStart.x -= halfStartEndcapDist.x;
-				lastEndcapStart.y -= halfStartEndcapDist.y;
+				lastEndcapStart.y += halfStartEndcapDist.y;
 				lastEndcapEnd.x += halfStartEndcapDist.x;
-				lastEndcapEnd.y += halfStartEndcapDist.y;
+				lastEndcapEnd.y -= halfStartEndcapDist.y;
 			}
 			
 			// And the end's end cap:
 			NSPoint	endEndcapStart = endPoint,
 					endEndcapEnd = endPoint;
 			endEndcapStart.x -= halfStartEndcapDist.x;
-			endEndcapStart.y -= halfStartEndcapDist.y;
+			endEndcapStart.y += halfStartEndcapDist.y;
 			endEndcapEnd.x += halfStartEndcapDist.x;
-			endEndcapEnd.y += halfStartEndcapDist.y;
+			endEndcapEnd.y -= halfStartEndcapDist.y;
 			
 			NSBezierPath	*	segmentPath = [NSBezierPath bezierPath];
 			[segmentPath moveToPoint: lastEndcapStart];
