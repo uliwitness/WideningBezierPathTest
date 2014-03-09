@@ -3,6 +3,7 @@
 //  WideningBezierPath
 //
 //  Created by Uli Kusterer on 2014-03-08.
+//	Thanks to Marcel Weiher for finding my sign error.
 //  Copyright (c) 2014 Uli Kusterer. All rights reserved.
 //
 
@@ -50,6 +51,8 @@
 	[originalPath curveToPoint: end
        controlPoint1: cp1
        controlPoint2: cp2];
+	
+	// Generate a shape that corresponds to the outline of this path:
 	NSBezierPath	*	flatPath = [originalPath bezierPathByFlatteningPath];
 	NSPoint				lastEndcapStart = NSZeroPoint,
 						lastEndcapEnd = NSZeroPoint;
@@ -57,6 +60,8 @@
 	CGFloat				segmentEndWidth = startWidth;
 	NSPoint				startPoint = NSZeroPoint;
 	NSInteger			numElems = flatPath.elementCount;
+	NSBezierPath*		wideningPath = [NSBezierPath bezierPath];
+	NSPoint	*			backPoints = (NSPoint*) calloc(sizeof(NSPoint),numElems);
 	for( NSInteger x = 0; x < numElems; x++ )
 	{
 		NSPoint				controlPoints[3] = {0};
@@ -85,6 +90,8 @@
 				lastEndcapStart.y += halfStartEndcapDist.y;
 				lastEndcapEnd.x += halfStartEndcapDist.x;
 				lastEndcapEnd.y -= halfStartEndcapDist.y;
+				[wideningPath moveToPoint: lastEndcapStart];
+				[wideningPath lineToPoint: lastEndcapEnd];
 			}
 			
 			// And the end's end cap:
@@ -95,17 +102,8 @@
 			endEndcapEnd.x += halfStartEndcapDist.x;
 			endEndcapEnd.y -= halfStartEndcapDist.y;
 			
-			NSBezierPath	*	segmentPath = [NSBezierPath bezierPath];
-			[segmentPath setLineWidth: 0.5];
-			[segmentPath moveToPoint: lastEndcapStart];
-			[segmentPath lineToPoint: lastEndcapEnd];
-			[segmentPath lineToPoint: endEndcapEnd];
-			[segmentPath lineToPoint: endEndcapStart];
-			[segmentPath lineToPoint: lastEndcapStart];
-			
-			[NSColor.purpleColor set];
-			[segmentPath fill];
-			[segmentPath stroke];
+			[wideningPath lineToPoint: endEndcapEnd];
+			backPoints[x] = lastEndcapStart;
 			
 			lastEndcapStart = endEndcapStart;
 			lastEndcapEnd = endEndcapEnd;
@@ -113,6 +111,17 @@
 			segmentStartWidth = segmentEndWidth;
 		}
 	}
+	
+	[wideningPath lineToPoint: lastEndcapStart];
+	
+	for( NSInteger x = numElems-1; x > 0; x-- )
+		[wideningPath lineToPoint: backPoints[x]];
+	free( backPoints );
+	backPoints = NULL;
+	
+	// --- Draw a shape corresponding to the path, with varying line widths:
+	[NSColor.purpleColor set];
+	[wideningPath fill];
 	
 	// --- Draw the Quartz path that this should correspond to, for comparison:
 	[NSColor.blackColor set];
