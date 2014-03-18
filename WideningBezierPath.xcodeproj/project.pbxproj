@@ -19,6 +19,7 @@
 		5515841918CB4FEE00DB3431 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5515841718CB4FEE00DB3431 /* InfoPlist.strings */; };
 		5515841B18CB4FEE00DB3431 /* WideningBezierPathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5515841A18CB4FEE00DB3431 /* WideningBezierPathTests.m */; };
 		5515842618CB501100DB3431 /* ULIWideningBezierPathView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5515842518CB501100DB3431 /* ULIWideningBezierPathView.m */; };
+		55BCD16618CBEB1300EEF223 /* ULIWideningBezierPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 55BCD16518CBEB1300EEF223 /* ULIWideningBezierPath.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,8 @@
 		5515841A18CB4FEE00DB3431 /* WideningBezierPathTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WideningBezierPathTests.m; sourceTree = "<group>"; };
 		5515842418CB501100DB3431 /* ULIWideningBezierPathView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ULIWideningBezierPathView.h; sourceTree = "<group>"; };
 		5515842518CB501100DB3431 /* ULIWideningBezierPathView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ULIWideningBezierPathView.m; sourceTree = "<group>"; };
+		55BCD16418CBEB1300EEF223 /* ULIWideningBezierPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ULIWideningBezierPath.h; sourceTree = "<group>"; };
+		55BCD16518CBEB1300EEF223 /* ULIWideningBezierPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ULIWideningBezierPath.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +125,8 @@
 				5515840318CB4FED00DB3431 /* ULIAppDelegate.m */,
 				5515842418CB501100DB3431 /* ULIWideningBezierPathView.h */,
 				5515842518CB501100DB3431 /* ULIWideningBezierPathView.m */,
+				55BCD16418CBEB1300EEF223 /* ULIWideningBezierPath.h */,
+				55BCD16518CBEB1300EEF223 /* ULIWideningBezierPath.m */,
 				5515840518CB4FED00DB3431 /* MainMenu.xib */,
 				5515840818CB4FED00DB3431 /* Images.xcassets */,
 				551583F718CB4FED00DB3431 /* Supporting Files */,
@@ -261,6 +266,7 @@
 				551583FD18CB4FED00DB3431 /* main.m in Sources */,
 				5515840418CB4FED00DB3431 /* ULIAppDelegate.m in Sources */,
 				5515842618CB501100DB3431 /* ULIWideningBezierPathView.m in Sources */,
+				55BCD16618CBEB1300EEF223 /* ULIWideningBezierPath.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,7 +330,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -361,7 +367,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -471,6 +477,7 @@
 				5515842018CB4FEE00DB3431 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5515842118CB4FEE00DB3431 /* Build configuration list for PBXNativeTarget "WideningBezierPathTests" */ = {
 			isa = XCConfigurationList;
@@ -479,6 +486,7 @@
 				5515842318CB4FEE00DB3431 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

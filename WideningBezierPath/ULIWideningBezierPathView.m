@@ -8,6 +8,8 @@
 //
 
 #import "ULIWideningBezierPathView.h"
+#import "ULIWideningBezierPath.h"
+
 
 @implementation ULIWideningBezierPathView
 
@@ -46,6 +48,16 @@
 
 -(void)	drawRect: (NSRect)dirtyRect
 {
+	#if 1
+	ULIWideningBezierPath	*	path = [[[ULIWideningBezierPath alloc] init] autorelease];
+	[path moveToPoint: start lineWidth: startWidth];
+	[path curveToPoint: end
+       controlPoint1: cp1
+       controlPoint2: cp2 lineWidth: endWidth];
+	
+	NSBezierPath			*	originalPath = [path pathForFill];
+	NSBezierPath			*	wideningPath = [path pathForStroke];
+	#else
 	NSBezierPath	*	originalPath = [NSBezierPath bezierPath];
 	[originalPath moveToPoint: start];
 	[originalPath curveToPoint: end
@@ -118,6 +130,7 @@
 		[wideningPath lineToPoint: backPoints[x]];
 	free( backPoints );
 	backPoints = NULL;
+	#endif
 	
 	// --- Draw a shape corresponding to the path, with varying line widths:
 	[NSColor.purpleColor set];
