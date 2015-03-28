@@ -11,6 +11,7 @@
 @interface ULIWideningBezierPath ()
 {
 	NSBezierPath	*	actualPath;
+	CGMutablePathRef	actualCGPath;
 	CGFloat			*	lineSizeArray;
 }
 
@@ -26,6 +27,7 @@
 		free( lineSizeArray );
 	}
 	[actualPath release];
+	CGPathRelease(actualCGPath);
 	
 	[super dealloc];
 }
@@ -78,7 +80,7 @@
 	NSInteger			numElems = flatPath.elementCount;
 	for( NSInteger x = 0; x < numElems; x++ )
 	{
-		NSPoint				controlPoints[3] = {0};
+		NSPoint				controlPoints[3] = {{0}};
 		NSBezierPathElement elem = [flatPath elementAtIndex: x associatedPoints: controlPoints];
 		CGFloat				segmentStartWidth = startWidth +((endWidth -startWidth) *((1.0 / numElems) *x));
 		CGFloat				segmentEndWidth = startWidth +((endWidth -startWidth) *((1.0 / numElems) * x));
@@ -127,6 +129,10 @@
 			*lastPoint = points[2];
 			break;
 		}
+		
+		case NSClosePathBezierPathElement:
+			// +++ Add line back to start?
+			break;
 	}
 }
 
@@ -149,7 +155,7 @@
 	NSInteger		numElems = actualPath.elementCount;
 	for( NSInteger x = 0; x < numElems; x++ )
 	{
-		NSPoint				controlPoints[3] = {0};
+		NSPoint				controlPoints[3] = {{0}};
 		NSBezierPathElement elem = [actualPath elementAtIndex: x associatedPoints: controlPoints];
 		
 		[self uli_addPointsForStrokeOfPathElement: elem points: controlPoints startLineWidth: lastLineWidth endLineWidth: lineSizeArray[x] toDownArray: &downPoints downCount: &numDownPoints upArray: &upPoints upCount: &numUpPoints lastPoint: &lastPoint];
@@ -171,6 +177,18 @@
 		free(upPoints);
 	
 	return strokePath;
+}
+
+
+-(CGPathRef)	CGPathForFill
+{
+	return actualCGPath;
+}
+
+
+-(CGPathRef)	CGPathForStroke
+{
+	return [self uli_CGPathForStroke];
 }
 
 
@@ -278,8 +296,12 @@
 - (void)moveToPoint:(NSPoint)point lineWidth: (CGFloat)width
 {
 	if( !actualPath )
+	{
 		actualPath = [[NSBezierPath alloc] init];
+		actualCGPath = CGPathCreateMutable();
+	}
 	[actualPath moveToPoint: point];
+	CGPathMoveToPoint( actualCGPath, NULL, point.x, point.y );
 	[self uli_addLineWidth: width];
 }
 
@@ -287,8 +309,12 @@
 - (void)lineToPoint:(NSPoint)point lineWidth: (CGFloat)width
 {
 	if( !actualPath )
+	{
 		actualPath = [[NSBezierPath alloc] init];
+		actualCGPath = CGPathCreateMutable();
+	}
 	[actualPath lineToPoint: point];
+	CGPathAddLineToPoint( actualCGPath, NULL, point.x, point.y );
 	[self uli_addLineWidth: width];
 }
 
@@ -299,8 +325,12 @@
 	   lineWidth: (CGFloat)width
 {
 	if( !actualPath )
+	{
 		actualPath = [[NSBezierPath alloc] init];
+		actualCGPath = CGPathCreateMutable();
+	}
 	[actualPath curveToPoint: endPoint controlPoint1: controlPoint1 controlPoint2: controlPoint2];
+	CGPathAddCurveToPoint( actualCGPath, NULL, controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y, endPoint.x, endPoint.y );
 	[self uli_addLineWidth: width];
 }
 
@@ -308,7 +338,9 @@
 - (void)closePath
 {
 	[actualPath closePath];
+	CGPathCloseSubpath( actualCGPath );
 }
+
 
 - (void)removeAllPoints
 {
@@ -318,15 +350,22 @@
 		lineSizeArray = NULL;
 	}
 	[actualPath removeAllPoints];
+	CGPathRelease( actualCGPath );
+	actualCGPath = CGPathCreateMutable();
 }
+
 
 // Relative path construction.
 
 - (void)relativeMoveToPoint:(NSPoint)point lineWidth: (CGFloat)width
 {
 	if( !actualPath )
+	{
 		actualPath = [[NSBezierPath alloc] init];
+		actualCGPath = CGPathCreateMutable();
+	}
 	[actualPath relativeMoveToPoint: point];
+	// +++ also update actualCGPath
 	[self uli_addLineWidth: width];
 }
 
@@ -334,8 +373,12 @@
 - (void)relativeLineToPoint:(NSPoint)point lineWidth: (CGFloat)width;
 {
 	if( !actualPath )
+	{
 		actualPath = [[NSBezierPath alloc] init];
+		actualCGPath = CGPathCreateMutable();
+	}
 	[actualPath relativeLineToPoint: point];
+	// +++ also update actualCGPath
 	[self uli_addLineWidth: width];
 }
 
@@ -346,8 +389,12 @@
 		   lineWidth: (CGFloat)width
 {
 	if( !actualPath )
+	{
 		actualPath = [[NSBezierPath alloc] init];
+		actualCGPath = CGPathCreateMutable();
+	}
 	[actualPath relativeCurveToPoint: endPoint controlPoint1: controlPoint1 controlPoint2: controlPoint2];
+	// +++ also update actualCGPath
 	[self uli_addLineWidth: width];
 }
 

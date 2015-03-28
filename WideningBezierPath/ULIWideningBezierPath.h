@@ -6,12 +6,15 @@
 //  Copyright (c) 2014 Uli Kusterer. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
+
 
 @interface ULIWideningBezierPath : NSObject
 
 -(NSBezierPath*)	pathForFill;
--(NSBezierPath*)	pathForStroke;	// An NSBezierPath describing the outline of this path with varying line widths. This is the thing you want to draw.
+-(NSBezierPath*)	pathForStroke;		// An NSBezierPath describing the outline of this path with varying line widths. This is the thing you want to draw.
+-(CGPathRef)		CGPathForFill;
+-(CGPathRef)		CGPathForStroke;	// A CGPathRef describing the outline of this path with varying line widths. This is the thing you want to draw.
 
 // Path construction.
 
