@@ -180,6 +180,51 @@
 }
 
 
+-(CGPathRef)	uli_CGPathForStroke
+{
+	for( NSInteger x = 0; x < actualPath.elementCount; x++ )
+	{
+		NSLog( @"lineWidth = %f", lineSizeArray[x] );
+	}
+	NSLog( @"" );
+	
+	NSPointArray	downPoints = NULL;
+	NSInteger		numDownPoints = 0;
+	NSPointArray	upPoints = NULL;
+	NSInteger		numUpPoints = 0;
+	CGFloat			lastLineWidth = lineSizeArray[0];
+	NSPoint			lastPoint = NSZeroPoint;
+	
+	NSInteger		numElems = actualPath.elementCount;
+	for( NSInteger x = 0; x < numElems; x++ )
+	{
+		NSPoint				controlPoints[3] = {{0}};
+		NSBezierPathElement elem = [actualPath elementAtIndex: x associatedPoints: controlPoints];
+		
+		[self uli_addPointsForStrokeOfPathElement: elem points: controlPoints startLineWidth: lastLineWidth endLineWidth: lineSizeArray[x] toDownArray: &downPoints downCount: &numDownPoints upArray: &upPoints upCount: &numUpPoints lastPoint: &lastPoint];
+		lastLineWidth = lineSizeArray[x];
+	}
+	
+	CGMutablePathRef	strokePath = CGPathCreateMutable();
+	[(id)strokePath autorelease];
+	
+	// Start cap of line:
+	CGPathMoveToPoint( strokePath, NULL, upPoints[0].x, upPoints[0].y );
+	CGPathAddLineToPoint( strokePath, NULL, downPoints[0].x, downPoints[0].y );
+	for( NSInteger x = 1; x < numDownPoints; x++ )
+		CGPathAddLineToPoint( strokePath, NULL, downPoints[x].x, downPoints[x].y );
+	for( NSInteger x = (numUpPoints -1); x > -1; x-- )
+		CGPathAddLineToPoint( strokePath, NULL, upPoints[x].x, upPoints[x].y );
+	
+	if( downPoints )
+		free(downPoints);
+	if( upPoints )
+		free(upPoints);
+	
+	return strokePath;
+}
+
+
 -(CGPathRef)	CGPathForFill
 {
 	return actualCGPath;
