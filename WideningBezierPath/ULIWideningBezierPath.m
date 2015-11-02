@@ -208,13 +208,16 @@
 	CGMutablePathRef	strokePath = CGPathCreateMutable();
 	[(id)strokePath autorelease];
 	
-	// Start cap of line:
-	CGPathMoveToPoint( strokePath, NULL, upPoints[0].x, upPoints[0].y );
-	CGPathAddLineToPoint( strokePath, NULL, downPoints[0].x, downPoints[0].y );
-	for( NSInteger x = 1; x < numDownPoints; x++ )
-		CGPathAddLineToPoint( strokePath, NULL, downPoints[x].x, downPoints[x].y );
-	for( NSInteger x = (numUpPoints -1); x > -1; x-- )
-		CGPathAddLineToPoint( strokePath, NULL, upPoints[x].x, upPoints[x].y );
+	if( upPoints && downPoints )
+	{
+		// Start cap of line:
+		CGPathMoveToPoint( strokePath, NULL, upPoints[0].x, upPoints[0].y );
+		CGPathAddLineToPoint( strokePath, NULL, downPoints[0].x, downPoints[0].y );
+		for( NSInteger x = 1; x < numDownPoints; x++ )
+			CGPathAddLineToPoint( strokePath, NULL, downPoints[x].x, downPoints[x].y );
+		for( NSInteger x = (numUpPoints -1); x > -1; x-- )
+			CGPathAddLineToPoint( strokePath, NULL, upPoints[x].x, upPoints[x].y );
+	}
 	
 	if( downPoints )
 		free(downPoints);
