@@ -139,11 +139,11 @@
 
 -(NSBezierPath*)	uli_pathForStroke
 {
-	for( NSInteger x = 0; x < actualPath.elementCount; x++ )
-	{
-		NSLog( @"lineWidth = %f", lineSizeArray[x] );
-	}
-	NSLog( @"" );
+//	for( NSInteger x = 0; x < actualPath.elementCount; x++ )
+//	{
+//		NSLog( @"lineWidth = %f", lineSizeArray[x] );
+//	}
+//	NSLog( @"" );
 	
 	NSPointArray	downPoints = NULL;
 	NSInteger		numDownPoints = 0;
@@ -182,11 +182,11 @@
 
 -(CGPathRef)	uli_CGPathForStroke
 {
-	for( NSInteger x = 0; x < actualPath.elementCount; x++ )
-	{
-		NSLog( @"lineWidth = %f", lineSizeArray[x] );
-	}
-	NSLog( @"" );
+//	for( NSInteger x = 0; x < actualPath.elementCount; x++ )
+//	{
+//		NSLog( @"lineWidth = %f", lineSizeArray[x] );
+//	}
+//	NSLog( @"" );
 	
 	NSPointArray	downPoints = NULL;
 	NSInteger		numDownPoints = 0;
