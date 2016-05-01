@@ -57,6 +57,8 @@
 	NSPoint	orthogonalStartDist = { -startDist.y, startDist.x };
 	CGFloat	orthogonalStartDistLen = sqrt(orthogonalStartDist.x*orthogonalStartDist.x +orthogonalStartDist.y*orthogonalStartDist.y);
 	CGFloat	startDistScaleFactor = orthogonalStartDistLen / (segmentStartWidth /2);
+	if( startDistScaleFactor == 0 )	// Line has 0 length, don't divide by 0.
+		return;
 	NSPoint	halfStartEndcapDist = { orthogonalStartDist.x / startDistScaleFactor, orthogonalStartDist.y / startDistScaleFactor };
 	
 	// Now that we know how far one half of the line is away from the center in offsets on the X/Y axes, we can calculate the start & end points of the end's end cap:
@@ -67,6 +69,8 @@
 	endEndcapEnd.x += halfStartEndcapDist.x;
 	endEndcapEnd.y -= halfStartEndcapDist.y;
 	
+	assert(!isnan(endEndcapEnd.x) && !isnan(endEndcapEnd.y) && !isnan(endEndcapStart.x) && !isnan(endEndcapStart.y));
+	
 	[self uli_appendPoint: endEndcapEnd toList: downPoints withCounter: numDownPoints];
 	[self uli_appendPoint: endEndcapStart toList: upPoints withCounter: numUpPoints];
 }
@@ -74,7 +78,7 @@
 
 -(void)	uli_addPointsForBezierPath: (NSBezierPath*)path toDownArray: (NSPointArray*)downPoints downCount: (NSInteger*)numDownPoints upArray: (NSPointArray*)upPoints upCount: (NSInteger*)numUpPoints startWidth: (CGFloat)startWidth endWidth: (CGFloat)endWidth lastPoint: (NSPoint*)lastPoint
 {
-	NSLog( @"line width = %f, %f", startWidth, endWidth );
+//	NSLog( @"line width = %f, %f", startWidth, endWidth );
 	
 	NSBezierPath	*	flatPath = [path bezierPathByFlatteningPath];
 	NSInteger			numElems = flatPath.elementCount;
@@ -90,19 +94,19 @@
 			segmentStartWidth = startWidth +((endWidth -startWidth) *((1.0 / numElems) *x));
 			[self uli_addPointsForStrokeOfLineFrom: controlPoints[1] toPoint: controlPoints[0] toDownArray: downPoints downCount: numDownPoints upArray: upPoints upCount: numUpPoints startWidth: segmentStartWidth endWidth: segmentStartWidth];
 			*lastPoint = controlPoints[0];
-			NSLog( @"segmentWidth = %f, %f", segmentStartWidth, segmentEndWidth );
+//			NSLog( @"segmentWidth = %f, %f", segmentStartWidth, segmentEndWidth );
 		}
 		else if( elem == NSLineToBezierPathElement )
 		{
 			segmentEndWidth = startWidth +((endWidth -startWidth) *((1.0 / numElems) * x));
 			[self uli_addPointsForStrokeOfLineFrom: *lastPoint toPoint: controlPoints[0] toDownArray: downPoints downCount: numDownPoints upArray: upPoints upCount: numUpPoints startWidth: segmentStartWidth endWidth: segmentEndWidth];
-			NSLog( @"segmentWidth(2) = %f, %f", segmentStartWidth, segmentEndWidth );
+//			NSLog( @"segmentWidth(2) = %f, %f", segmentStartWidth, segmentEndWidth );
 			
 			*lastPoint = controlPoints[0];
 			segmentStartWidth = segmentEndWidth;
 		}
 	}
-	NSLog(@"");
+//	NSLog(@"");
 }
 
 
@@ -111,7 +115,7 @@
 	switch( inElem )
 	{
 		case NSMoveToBezierPathElement:
-//			[self uli_addPointsForStrokeOfLineFrom: *lastPoint toPoint: points[0] toDownArray: downPoints downCount: numDownPoints upArray: upPoints upCount: numUpPoints startWidth: startWidth endWidth: endWidth];
+			[self uli_addPointsForStrokeOfLineFrom: *lastPoint toPoint: points[0] toDownArray: downPoints downCount: numDownPoints upArray: upPoints upCount: numUpPoints startWidth: startWidth endWidth: endWidth];
 			*lastPoint = points[0];
 			break;
 		
@@ -186,7 +190,7 @@
 //	{
 //		NSLog( @"lineWidth = %f", lineSizeArray[x] );
 //	}
-//	NSLog( @"" );
+//	NSLog( @" " );
 	
 	NSPointArray	downPoints = NULL;
 	NSInteger		numDownPoints = 0;
@@ -196,19 +200,25 @@
 	NSPoint			lastPoint = NSZeroPoint;
 	
 	NSInteger		numElems = actualPath.elementCount;
-	for( NSInteger x = 0; x < numElems; x++ )
+	if( numElems > 1 )
 	{
-		NSPoint				controlPoints[3] = {{0}};
-		NSBezierPathElement elem = [actualPath elementAtIndex: x associatedPoints: controlPoints];
-		
-		[self uli_addPointsForStrokeOfPathElement: elem points: controlPoints startLineWidth: lastLineWidth endLineWidth: lineSizeArray[x] toDownArray: &downPoints downCount: &numDownPoints upArray: &upPoints upCount: &numUpPoints lastPoint: &lastPoint];
-		lastLineWidth = lineSizeArray[x];
+		for( NSInteger x = 0; x < numElems; x++ )
+		{
+			NSPoint				controlPoints[3] = {{0}};
+			NSBezierPathElement elem = [actualPath elementAtIndex: x associatedPoints: controlPoints];
+			
+//			NSLog( @"%@ %@ %@", NSStringFromPoint(controlPoints[0]), NSStringFromPoint(controlPoints[1]), NSStringFromPoint(controlPoints[2]) );
+			[self uli_addPointsForStrokeOfPathElement: elem points: controlPoints startLineWidth: lastLineWidth endLineWidth: lineSizeArray[x] toDownArray: &downPoints downCount: &numDownPoints upArray: &upPoints upCount: &numUpPoints lastPoint: &lastPoint];
+			lastLineWidth = lineSizeArray[x];
+		}
 	}
 	
 	CGMutablePathRef	strokePath = CGPathCreateMutable();
 	[(id)strokePath autorelease];
 	
-	if( upPoints && downPoints )
+//	NSLog( @"numUpPoints = %ld numDownPoints = %ld", (long)numUpPoints, (long)numDownPoints );
+	
+	if( upPoints && downPoints && numUpPoints > 1 && numDownPoints > 1 )
 	{
 		// Start cap of line:
 		CGPathMoveToPoint( strokePath, NULL, upPoints[0].x, upPoints[0].y );
